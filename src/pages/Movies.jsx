@@ -1,8 +1,10 @@
+import { Loader } from 'components/Loader/Loader';
 import { MoviesList } from 'components/MoviesList/MoviesList';
 import { SearchBar } from 'components/SearchBar/SearchBar';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { fetchSearchMovies } from 'services/api';
+import toast from 'react-hot-toast';
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -13,9 +15,16 @@ function Movies() {
   const query = searchParams.get('query') ?? '';
 
   useEffect(() => {
-    if (!query) {
+    if (!query && error) {
+      toast.error(
+        'An unexpected issue occurred; kindly attempt to refresh the page.',
+        {
+          icon: '🫣',
+        }
+      );
       return;
     }
+
     async function getSearchMovies() {
       try {
         setLoading(true);
@@ -23,6 +32,9 @@ function Movies() {
         setMovies(results);
       } catch {
         setError(true);
+        toast.error('Oops, something went wrong. Please try again.', {
+          icon: '🆘',
+        });
       } finally {
         setError(false);
         setLoading(false);
@@ -30,13 +42,13 @@ function Movies() {
     }
 
     getSearchMovies();
-  }, [query]);
+  }, [error, query]);
 
   function onSubmit(e) {
     e.preventDefault();
     const value = e.target.elements.query.value;
 
-    if (value === '') return;
+    if (value.trim() === '') return;
 
     setSearchParams({ query: value });
     e.target.reset();
@@ -46,7 +58,7 @@ function Movies() {
     <>
       <SearchBar onSubmit={onSubmit} />
       {movies.length > 0 && <MoviesList movies={movies} />}
-      {loading}
+      {loading && <Loader />}
       {error && !loading}
     </>
   );

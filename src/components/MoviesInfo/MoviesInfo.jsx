@@ -1,3 +1,15 @@
+import {
+  MovieContainer,
+  MovieGenreItem,
+  MovieGenreList,
+  MovieGenres,
+  MovieOverview,
+  MovieOverviewText,
+  MoviePoster,
+  MovieRating,
+  MovieTitle,
+} from './MoviesInfo.styled';
+
 function MovieInfo({ movieDetails }) {
   const {
     poster_path,
@@ -14,8 +26,8 @@ function MovieInfo({ movieDetails }) {
   const releaseYear = new Date(release_date).getFullYear();
 
   return (
-    <div>
-      <img
+    <MovieContainer>
+      <MoviePoster
         src={
           poster_path
             ? `https://image.tmdb.org/t/p/w500/${poster_path}`
@@ -25,28 +37,30 @@ function MovieInfo({ movieDetails }) {
         alt="poster"
       />
       <div>
-        <h2>
+        <MovieTitle>
           {title} ({release_date ? releaseYear : 'not published'})
-        </h2>
-        <p>Rating: {rating.toFixed(2)}</p>
-        <h3>Overview</h3>
-        <p>{overview ? overview : 'not published'}</p>
-        <h3>Genres</h3>
+        </MovieTitle>
+        <MovieRating>Rating: {rating.toFixed(2)}</MovieRating>
+        <MovieOverview>Overview</MovieOverview>
+        <MovieOverviewText>
+          {overview ? overview : 'not published'}
+        </MovieOverviewText>
+        <MovieGenres>Genres</MovieGenres>
         {genres?.length > 0 ? (
-          <ul>
+          <MovieGenreList>
             {genres.map(({ id, name }) => {
               return (
-                <li key={id}>
+                <MovieGenreItem key={id}>
                   <p>{name}</p>
-                </li>
+                </MovieGenreItem>
               );
             })}
-          </ul>
+          </MovieGenreList>
         ) : (
           <p>not published</p>
         )}
       </div>
-    </div>
+    </MovieContainer>
   );
 }
 

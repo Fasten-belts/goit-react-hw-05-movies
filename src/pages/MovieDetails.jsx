@@ -1,7 +1,17 @@
+import { Loader } from 'components/Loader/Loader';
 import { MovieInfo } from 'components/MoviesInfo/MoviesInfo';
 import { useState, useEffect, useRef } from 'react';
-import { Link, Outlet, useParams, useLocation } from 'react-router-dom';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { fetchDetails } from 'services/api';
+import toast from 'react-hot-toast';
+import {
+  AdditionalInfo,
+  BackButton,
+  Container,
+  InfoItem,
+  InfoList,
+  LinkStyled,
+} from './MovieDetails.styled';
 
 function MoviesDetails() {
   const { movieId } = useParams();
@@ -12,7 +22,15 @@ function MoviesDetails() {
   const backLink = useRef(location.state?.from ?? '/movies');
 
   useEffect(() => {
-    if (!movieId) return;
+    if (!movieId) {
+      toast.error(
+        'An unexpected issue occurred; kindly attempt to refresh the page.',
+        {
+          icon: '🫣',
+        }
+      );
+      return;
+    }
 
     async function getMovieDetails() {
       try {
@@ -21,6 +39,9 @@ function MoviesDetails() {
         setMovieDetails(data);
       } catch {
         setError(true);
+        toast.error('Oops, something went wrong. Please try again.', {
+          icon: '🆘',
+        });
       } finally {
         setError(false);
         setLoading(false);
@@ -31,33 +52,27 @@ function MoviesDetails() {
   }, [movieId]);
 
   return (
-    <>
-      {loading}
+    <Container>
+      {loading && <Loader />}
       {error && !loading}
-      <Link to={backLink.current}>
-        <button type="button">Go back</button>
-      </Link>
+
+      <BackButton to={backLink.current}>Go back</BackButton>
 
       {movieDetails && <MovieInfo movieDetails={movieDetails} />}
 
-      <section>
-        <ul>
+      <AdditionalInfo>
+        <InfoList>
           <h3>Additional information</h3>
-          <li>
-            <Link to="cast">
-              <button type="button">Cast</button>
-            </Link>
-          </li>
-          <li>
-            <Link to="reviews">
-              <button type="button">Reviews</button>
-            </Link>
-          </li>
-        </ul>
-      </section>
-
+          <InfoItem>
+            <LinkStyled to="cast">Cast</LinkStyled>
+          </InfoItem>
+          <InfoItem>
+            <LinkStyled to="reviews">Reviews</LinkStyled>
+          </InfoItem>
+        </InfoList>
+      </AdditionalInfo>
       <Outlet />
-    </>
+    </Container>
   );
 }
 

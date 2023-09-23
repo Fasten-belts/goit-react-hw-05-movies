@@ -1,9 +1,17 @@
+import { FormContainer, InputField, SubmitButton } from './SearchBar.styled';
+
 function SearchBar({ onSubmit }) {
   return (
-    <form onSubmit={onSubmit}>
-      <input type="text" name="query" autoFocus="on" autoComplete="on" />
-      <button type="submit">Search</button>
-    </form>
+    <FormContainer onSubmit={onSubmit}>
+      <InputField
+        type="text"
+        name="query"
+        autoFocus="on"
+        autoComplete="on"
+        placeholder="Search..."
+      />
+      <SubmitButton type="submit">Search</SubmitButton>
+    </FormContainer>
   );
 }
 export { SearchBar };

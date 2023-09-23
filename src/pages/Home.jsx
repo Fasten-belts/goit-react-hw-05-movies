@@ -1,6 +1,9 @@
+import { Loader } from 'components/Loader/Loader';
 import { MoviesList } from 'components/MoviesList/MoviesList';
 import { useEffect, useState } from 'react';
 import { fetchTrendMovie } from 'services/api';
+import toast from 'react-hot-toast';
+import { Container, Title } from './Home.styled';
 
 function Home() {
   const [movies, setMovies] = useState([]);
@@ -15,6 +18,9 @@ function Home() {
         setMovies(data.results);
       } catch (error) {
         setError(true);
+        toast.error('Oops, something went wrong. Please try again.', {
+          icon: '🆘',
+        });
       } finally {
         setLoading(false);
         setError(false);
@@ -24,12 +30,12 @@ function Home() {
   }, []);
 
   return (
-    <>
-      {loading}
+    <Container>
+      {loading && <Loader />}
       {error && !loading}
-      <h2>Trending Movies This Week</h2>
+      <Title>Trending Movies This Week</Title>
       {movies.length > 0 && <MoviesList movies={movies} />}
-    </>
+    </Container>
   );
 }
 export default Home;
